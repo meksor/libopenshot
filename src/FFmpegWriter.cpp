@@ -117,7 +117,8 @@ void FFmpegWriter::Open() {
 // auto detect format (from path)
 void FFmpegWriter::auto_detect_format() {
 	// Auto detect the output format from the name. default is mpeg.
-	fmt = av_guess_format(NULL, path.c_str(), NULL);
+	fmt = const_cast<AVOutputFormat *>(av_guess_format(NULL, path.c_str(), NULL););
+
 	if (!fmt)
 		throw InvalidFormat("Could not deduce output format from file extension.", path);
 
