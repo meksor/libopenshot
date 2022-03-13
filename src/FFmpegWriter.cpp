@@ -17,6 +17,7 @@
 #include <iostream>
 #include <cmath>
 #include <ctime>
+#include <libavutil/frame.h>
 #include <unistd.h>
 
 #include "FFmpegUtilities.h"
@@ -1286,8 +1287,8 @@ AVStream *FFmpegWriter::add_video_stream() {
 #if (LIBAVFORMAT_VERSION_MAJOR >= 58)
 	#pragma GCC diagnostic push
 	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-	st->codec->time_base.num = info.video_timebase.num;
-	st->codec->time_base.den = info.video_timebase.den;
+	st->time_base.num = info.video_timebase.num;
+	st->time_base.den = info.video_timebase.den;
 	#pragma GCC diagnostic pop
 #endif
 
@@ -2131,7 +2132,7 @@ bool FFmpegWriter::write_video_packet(std::shared_ptr<Frame> frame, AVFrame *fra
 		pkt.flags |= AV_PKT_FLAG_KEY;
 		pkt.stream_index = video_st->index;
 		pkt.data = (uint8_t *) frame_final->data;
-		pkt.size = sizeof(AVPicture);
+		pkt.size = sizeof(AVFrame);
 
 		// Set PTS (in frames and scaled to the codec's timebase)
 		pkt.pts = video_timestamp;
